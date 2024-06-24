@@ -47,5 +47,3 @@ fn report(line_code: i32, where_code: String, message: String) {
     println!("line = {} has the following error {} : {}", line_code, where_code, message);
 }
 
-
-
