@@ -1,55 +1,57 @@
-enum TokenType {
-    LeftParenthesis, 
-    RightParenthesis,
-    LeftBrace, 
-    RightBrace,
-    COMMA,
-    DOT,
-    MINUS,
-    PLUS,
-    SEMICOLON,
-    SLASH,
-    STAR,
+pub mod token {
 
-    BANG,
-    BangEqual,
-    EQUAL,
-    EqualEqual,
-    GREATER,
-    GreaterEqual,
-    LESS,
-    LessEqual,
+    pub enum TokenType {
+        LeftParenthesis, 
+        RightParenthesis,
+        LeftBrace, 
+        RightBrace,
+        COMMA,
+        DOT,
+        MINUS,
+        PLUS,
+        SEMICOLON,
+        SLASH,
+        STAR,
 
-    IDENTIFIER,
-    STRING,
-    NUMBER,
+        BANG,
+        BangEqual,
+        EQUAL,
+        EqualEqual,
+        GREATER,
+        GreaterEqual,
+        LESS,
+        LessEqual,
 
-    AND,
-    CLASS,
-    ELSE,
-    FALSE,
-    FN,
-    FOR,
-    IF,
-    NO,
-    OR,
-    PRINT,
-    RETURN,
-    SUPER,
-    THIS,
-    TRUE,
-    VAR,
-    WHILE,
+        IDENTIFIER,
+        STRING,
+        NUMBER,
 
-    EOF,
+        AND,
+        CLASS,
+        ELSE,
+        FALSE,
+        FN,
+        FOR,
+        IF,
+        NO,
+        OR,
+        PRINT,
+        RETURN,
+        SUPER,
+        THIS,
+        TRUE,
+        VAR,
+        WHILE,
+
+        EOF,
+    }
+
+    pub struct Token {
+        token_type: TokenType,
+        lexeme: String,
+        literal: String,
+        line: i32
+    }
+
 }
-
-struct Token {
-    token_type: TokenType,
-    lexeme: String,
-    literal: String,
-    line: i32
-}
-
-
 
