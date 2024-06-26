@@ -1,6 +1,9 @@
 use std::env;
 use std::fs;
 
+mod token;
+mod scanner;
+
 fn main() {
     let args: Vec<String> = env::args().collect();
 

@@ -47,11 +47,10 @@ pub mod token {
     }
 
     pub struct Token {
-        token_type: TokenType,
-        lexeme: String,
-        literal: String,
-        line: i32
+        pub token_type: TokenType,
+        pub lexeme: String,
+        pub literal: String,
+        pub line: i32
     }
-
 }
 
