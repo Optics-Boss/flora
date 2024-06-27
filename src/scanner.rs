@@ -34,7 +34,8 @@ mod scanner {
         fn scan_token(&mut self) {
             let character = self.advance();
 
-            let match_character = self.match_char('=');
+            let match_equals = self.match_char('=');
+            let match_slash = self.match_char('/');
             match character {
                 '(' => self.add_token(TokenType::LeftParenthesis, "".to_string()),
                 ')' => self.add_token(TokenType::RightParenthesis, "".to_string()),
@@ -48,31 +49,38 @@ mod scanner {
                 '*' => self.add_token(TokenType::STAR, "".to_string()),
 
                 '!' => self.add_token(
-                    if match_character
+                    if match_equals
                       { TokenType::BangEqual } 
                     else 
                       { TokenType::BANG }, 
                 "".to_string()
                 ),
                 '=' => self.add_token( 
-                    if match_character
+                    if match_equals
                       { TokenType::EqualEqual } 
                     else 
                       { TokenType::EQUAL }, 
                 "".to_string()
                 ),
                 '<' => self.add_token( 
-                    if match_character
+                    if match_equals
                       { TokenType::LessEqual } 
                     else 
                       { TokenType::LESS }, 
                 "".to_string()
                 ),
                 '>' => self.add_token( 
-                    if match_character 
+                    if match_equals 
                       { TokenType::LessEqual } 
                     else 
                       { TokenType::LESS }, 
+                "".to_string()
+                ),
+                '/' => self.add_token( 
+                    if match_slash
+                      { TokenType::LessEqual } 
+                    else 
+                      { TokenType::SLASH }, 
                 "".to_string()
                 ),
                 _ => error(self.line, "Unexpected character".to_string()),
