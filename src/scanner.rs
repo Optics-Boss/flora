@@ -12,7 +12,7 @@ mod scanner {
     }
 
     impl Scanner {
-        pub fn scan_tokens(&mut self) -> Vec<Token> {
+        pub fn scan_tokens(&mut self) -> () {
             while !self.is_at_end() {
                 self.start = self.current
             }
@@ -23,8 +23,6 @@ mod scanner {
                         literal: "".to_string(),
                         line: 0
             });
-
-            self.tokens
         }
 
         fn is_at_end(&self) -> bool {
@@ -32,7 +30,7 @@ mod scanner {
         }
 
 
-        fn scan_token(&self) {
+        fn scan_token(&mut self) {
             let character = self.advance();
             match character {
                 '(' => self.add_token(TokenType::LeftParenthesis, "".to_string()),
@@ -45,22 +43,25 @@ mod scanner {
                 '+' => self.add_token(TokenType::PLUS, "".to_string()),
                 ';' => self.add_token(TokenType::SEMICOLON, "".to_string()),
                 '*' => self.add_token(TokenType::STAR, "".to_string()),
+                _ => print!("test"),
             }
         }
 
         fn advance(&self) -> char {
-            let result = self.source.chars().nth(self.current += 1).unwrap_or("");
+            let index : usize = usize::try_from(self.current + 1).expect("can't change i32 to usize");
+            let result = self.source.chars().nth(index).expect("index out of bound");
+            result
         }
 
-        fn add_token(&self, token_type: token::TokenType, literal: String) -> char {
-            let text: String = self.source[self.start..self.current];
+        fn add_token(&mut self, token_type: TokenType, literal: String) -> () {
+            let text: String = self.source[self.start as usize..self.current as usize].to_string();
 
-            self.tokens.add(token::Token(
-                    token::TokenType::EOF,
-                    text, 
-                    literal,
-                    self.line
-                    ));
+            self.tokens.push(Token {
+                        token_type,
+                        lexeme: text.to_string(),
+                        literal: literal.to_string(),
+                        line: 0
+            });
         }
     }
 
