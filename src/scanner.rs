@@ -2,6 +2,7 @@
 mod scanner {
     use crate::token::token::Token;
     use crate::token::token::TokenType;
+    use crate::error;
 
     pub struct Scanner {
         source: String,
@@ -32,6 +33,8 @@ mod scanner {
 
         fn scan_token(&mut self) {
             let character = self.advance();
+
+            let match_character = self.match_char('=');
             match character {
                 '(' => self.add_token(TokenType::LeftParenthesis, "".to_string()),
                 ')' => self.add_token(TokenType::RightParenthesis, "".to_string()),
@@ -43,7 +46,36 @@ mod scanner {
                 '+' => self.add_token(TokenType::PLUS, "".to_string()),
                 ';' => self.add_token(TokenType::SEMICOLON, "".to_string()),
                 '*' => self.add_token(TokenType::STAR, "".to_string()),
-                _ => print!("test"),
+
+                '!' => self.add_token(
+                    if match_character
+                      { TokenType::BangEqual } 
+                    else 
+                      { TokenType::BANG }, 
+                "".to_string()
+                ),
+                '=' => self.add_token( 
+                    if match_character
+                      { TokenType::EqualEqual } 
+                    else 
+                      { TokenType::EQUAL }, 
+                "".to_string()
+                ),
+                '<' => self.add_token( 
+                    if match_character
+                      { TokenType::LessEqual } 
+                    else 
+                      { TokenType::LESS }, 
+                "".to_string()
+                ),
+                '>' => self.add_token( 
+                    if match_character 
+                      { TokenType::LessEqual } 
+                    else 
+                      { TokenType::LESS }, 
+                "".to_string()
+                ),
+                _ => error(self.line, "Unexpected character".to_string()),
             }
         }
 
@@ -51,6 +83,19 @@ mod scanner {
             let index : usize = usize::try_from(self.current + 1).expect("can't change i32 to usize");
             let result = self.source.chars().nth(index).expect("index out of bound");
             result
+        }
+
+        fn match_char(&mut self, expected: char) -> bool {
+            let index : usize = usize::try_from(self.current).
+                expect("can't change i32 to usize");
+            let result = self.source.chars().nth(index).expect("index out of bound");
+
+            if self.is_at_end() { return false };
+            if result != expected { return false };
+
+            self.current += 1;
+
+            true
         }
 
         fn add_token(&mut self, token_type: TokenType, literal: String) -> () {
