@@ -76,15 +76,44 @@ mod scanner {
                       { TokenType::LESS }, 
                 "".to_string()
                 ),
-                '/' => self.add_token( 
-                    if match_slash
-                      { TokenType::LessEqual } 
-                    else 
-                      { TokenType::SLASH }, 
-                "".to_string()
-                ),
-                _ => error(self.line, "Unexpected character".to_string()),
+                '/' =>  
+                    if match_slash { 
+                        while self.peek() != '\n' && !self.is_at_end() {
+                            self.advance();
+                        }
+                    } else {
+                         self.add_token(TokenType::SLASH, "".to_string())
+                    }
+                ' ' => println!(""),
+                '\r' => println!(""),
+                '\t' => println!(""),
+                '\n' => self.line += 1,
+                '"' => self.its_string(),
+                value => if self.is_digit(value) {
+                    self.number()
+                } else {
+                    error(self.line, "Unexpected character".to_string());
+                }
             }
+        }
+
+        fn is_digit(&self, character: char) -> bool {
+            character >= '0' && character <= '9'
+        }
+
+        fn number(&mut self) -> () {
+            while self.is_digit(self.peek()) { self.advance(); }
+
+            if self.peek() == '.' && self.is_digit(self.peek_next()) {
+                self.advance();
+            }
+
+            while self.is_digit(self.peek()) { self.advance(); }
+
+            let double_source: f32 = self.source[self.start as usize..self.current as usize].to_string().parse().expect("this is not a double");
+
+            self.add_token(TokenType::NUMBER, double_source.to_string())
+
         }
 
         fn advance(&self) -> char {
@@ -116,6 +145,39 @@ mod scanner {
                         line: 0
             });
         }
-    }
 
+        fn peek(&self) -> char {
+            if self.is_at_end() { return '\0' };
+
+            let index : usize = usize::try_from(self.current).
+                expect("can't change i32 to usize");
+            let result = self.source.chars().nth(index).expect("index out of bound");
+
+            result
+        }
+
+        fn peek_next(&self) -> char {
+            if self.current + 1 >= self.source.len().try_into().unwrap() { return '\0' }
+            let index : usize = usize::try_from(self.current).expect("can't change i32 to usize");
+
+            self.source.chars().nth(index).expect("index out of bound")
+
+        }
+
+        fn its_string(&mut self) -> () {
+            while self.peek() != '"' && !self.is_at_end() {
+                if self.peek() != '\n' { self.line += 1 }
+                self.advance();
+            }
+
+            if self.is_at_end() {
+                error(self.line, "Unexpected character".to_string());
+            }
+
+            self.advance();
+
+            let value: String = self.source[(self.start + 1) as usize..(self.current - 1) as usize].to_string();
+            self.add_token(TokenType::STRING, value)
+        }
+    }
 }
