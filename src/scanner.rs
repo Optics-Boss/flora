@@ -3,6 +3,7 @@ mod scanner {
     use crate::token::token::Token;
     use crate::token::token::TokenType;
     use crate::error;
+    use std::collections::HashMap;
 
     pub struct Scanner {
         source: String,
@@ -105,9 +106,36 @@ mod scanner {
         }
 
         fn identifier(&mut self) -> () {
+            let keyword = HashMap::from([
+                ("and", TokenType::AND),
+                ("class", TokenType::CLASS),
+                ("else", TokenType::ELSE),
+                ("false", TokenType::CLASS),
+                ("for", TokenType::FOR),
+                ("fn", TokenType::FN),
+                ("if", TokenType::IF),
+                ("no", TokenType::NO),
+                ("or", TokenType::OR),
+                ("print", TokenType::PRINT),
+                ("return", TokenType::RETURN),
+                ("super", TokenType::SUPER),
+                ("this", TokenType::THIS),
+                ("true", TokenType::TRUE),
+                ("var", TokenType::VAR),
+                ("while", TokenType::WHILE),
+            ]);
+
             while self.is_alpha_numeric(self.peek()) { self.advance(); }
 
-            self.add_token(TokenType::IDENTIFIER, String::from(""))
+            let text: String = self.source[(self.start) as usize..(self.current) as usize].to_string();
+
+
+            let token_type : Option<&TokenType> = keyword.get(&text);
+
+            match token_type {
+                Some(token) => self.add_token(token, String::from("")) 
+                None => self.add_token(TokenType::IDENTIFIER, String::from(""))
+            }
         }
 
         fn is_digit(&self, character: char) -> bool {
