@@ -36,6 +36,8 @@ mod scanner {
 
             let match_equals = self.match_char('=');
             let match_slash = self.match_char('/');
+            let match_r = self.match_char('r');
+
             match character {
                 '(' => self.add_token(TokenType::LeftParenthesis, "".to_string()),
                 ')' => self.add_token(TokenType::RightParenthesis, "".to_string()),
@@ -89,16 +91,37 @@ mod scanner {
                 '\t' => println!(""),
                 '\n' => self.line += 1,
                 '"' => self.its_string(),
+                'o' => if match_r {
+                    self.add_token(TokenType::OR, "".to_string())
+                },
                 value => if self.is_digit(value) {
                     self.number()
+                } else if self.is_alpha(value){
+                    self.identifier();
                 } else {
                     error(self.line, "Unexpected character".to_string());
                 }
             }
         }
 
+        fn identifier(&mut self) -> () {
+            while self.is_alpha_numeric(self.peek()) { self.advance(); }
+
+            self.add_token(TokenType::IDENTIFIER, String::from(""))
+        }
+
         fn is_digit(&self, character: char) -> bool {
             character >= '0' && character <= '9'
+        }
+
+        fn is_alpha(&self, character: char) -> bool {
+            (character >= 'a' && character <= 'z') ||
+            (character >= 'A' && character <= 'Z') ||
+            character == '_'
+        }
+
+        fn is_alpha_numeric(&self, character: char) -> bool {
+            self.is_alpha(character) || self.is_digit(character)
         }
 
         fn number(&mut self) -> () {
