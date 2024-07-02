@@ -1,5 +1,6 @@
 pub mod token {
 
+    #[derive(Clone)]
     pub enum TokenType {
         LeftParenthesis, 
         RightParenthesis,

@@ -130,10 +130,13 @@ mod scanner {
             let text: String = self.source[(self.start) as usize..(self.current) as usize].to_string();
 
 
-            let token_type : Option<&TokenType> = keyword.get(&text);
+            let token_type : Option<&TokenType> = keyword.get(&*text);
 
             match token_type {
-                Some(token) => self.add_token(token, String::from("")) 
+                Some(token) => {
+                    let token : TokenType = token.clone();
+                    self.add_token(token, String::from("")) 
+                }
                 None => self.add_token(TokenType::IDENTIFIER, String::from(""))
             }
         }
