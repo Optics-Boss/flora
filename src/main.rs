@@ -3,6 +3,7 @@ use std::fs;
 
 mod token;
 mod scanner;
+mod parser;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
